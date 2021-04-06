@@ -1,5 +1,6 @@
 import { Howl, Howler } from 'howler'
 import TreeMap from '../util/TreeMap'
+import tempo,{setBPM} from '../util/tempo'
 
 let soundPools = {}
 
@@ -89,6 +90,10 @@ export default {
       const _startItem = () => {
         if (!isNaN(volume)) item.sound.volume(volume)
         if (!item.sound.playing()) item.play()
+        console.log("audio file : ", item.file)
+        fetch(item.file.href)
+        .then(val=>val.arrayBuffer())
+        .then(val=>{tempo(val)})
       }
 
       item = this.sounds[options.id]
@@ -280,6 +285,7 @@ export default {
 
       item.stop = () => {
         // if (item._playing) {
+        setBPM(0);
         sound.stop()
         clearLastDoAt()
         clearInterval(item._doInterval)

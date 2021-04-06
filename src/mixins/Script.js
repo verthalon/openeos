@@ -38,7 +38,9 @@ export default {
     getPageScript(pageId) {
       const page = this.getPage(pageId)
       let pageScript = pageScripts[pageId]
-      if (!pageScript) {
+     /*
+        bugged with random so i disable the check
+      if (!pageScript)*/ {
         console.log('Compiling Page Script:', pageId)
         pageScript = pageCompiler(page)
         pageScripts[pageId] = pageScript

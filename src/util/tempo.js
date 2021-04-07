@@ -1,4 +1,9 @@
-export let handyKey = ""
+export let handyKey = "" // <-- put your key here 
+let strokeLength = 90
+let currentSpeed = -1;
+let lastRequest = Date.now()
+let handyOn = false
+export let enabled = true
 export default function tempo(data) {
     let context = new window.AudioContext()
     context.decodeAudioData(data).then(value => {
@@ -34,10 +39,42 @@ function getPeaksAtThreshold(data, threshold) {
     return peaksArray;
 }
 
+export function setUpHandy() {
+    fetch("https://www.handyfeeling.com/api/v1/" + handyKey + "/getSettings").then(value => value.json()).then(json => {
+        if (json.stroke) {
+            strokeLength = json.stroke
+        }
+        setHandySpeed(0);
+    })
+    
+
+}
+setUpHandy()
 
 
 export function setBPM(bpm) {
-    fetch("https://www.handyfeeling.com/api/v1/" + handyKey + "/setMode?mode=1")
-    fetch("https://www.handyfeeling.com/api/v1/"+handyKey+"/setSpeed?speed="+bpm+"&type=%25")
+
     console.log("bpm :", bpm)
+    setHandySpeed((bpm * strokeLength) / 60)
+}
+function setHandySpeed(speed) {
+    if (speed > 350) speed = 350
+    if (speed < 5) {
+        if(handyOn){
+
+            handyOn = false;
+            return fetch("https://www.handyfeeling.com/api/v1/" + handyKey + "/setMode?mode=0")
+        }
+        return
+    }
+    
+    if ((speed != currentSpeed && lastRequest + 2 * 1000 < Date.now())) {
+        if(!handyOn){
+            fetch("https://www.handyfeeling.com/api/v1/" + handyKey + "/setMode?mode=1")
+            handyOn = true
+        }
+        fetch("https://www.handyfeeling.com/api/v1/" + handyKey + "/setSpeed?speed=" + speed).then(value => value.json()).then(value => console.log("handy response :", value))
+        currentSpeed = speed;
+        lastRequest = Date.now();
+    }
 }

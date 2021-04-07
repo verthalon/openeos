@@ -32,7 +32,7 @@
           <span>v{{ version }}</span>
         </div>
       </div>
-
+      
       <v-spacer></v-spacer>
       <span v-if="!formUri">{{ pageId }}</span>
       <!-- <v-btn v-if="!formUri && script" icon @click.stop="downloadDialog = true">

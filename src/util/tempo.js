@@ -60,8 +60,8 @@ export function setBPM(bpm) {
 function setHandySpeed(speed) {
     if (speed > 350) speed = 350
     if (speed < 5) {
+        currentSpeed = 0;
         if(handyOn){
-
             handyOn = false;
             return fetch("https://www.handyfeeling.com/api/v1/" + handyKey + "/setMode?mode=0")
         }
